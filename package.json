@@ -1,0 +1,25 @@
+{
+    "name": "gscautoremoveurl",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "preact": "^10.13.0"
+    },
+    "devDependencies": {
+        "@crxjs/vite-plugin": "^2.0.0-beta.15",
+        "@preact/preset-vite": "^2.5.0",
+        "@types/chrome": "^0.0.226",
+        "autoprefixer": "^10.4.14",
+        "postcss": "^8.4.21",
+        "prettier": "^2.8.7",
+        "tailwindcss": "^3.3.0",
+        "typescript": "^4.9.3",
+        "vite": "^4.2.0"
+    }
+}
