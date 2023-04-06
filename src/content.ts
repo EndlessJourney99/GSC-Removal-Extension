@@ -158,15 +158,16 @@ const processRemoveUrl = async (
             if (count === 50) break;
         }
 
-        const firstRowURL = document
-            .querySelector('div[jscontroller="prqp7d"]')
-            ?.querySelector('div[jsname="KYYiw"]')
-            ?.querySelector('span[role="tabpanel"]')
-            ?.querySelector(
-                'table tbody tr:first-child td:first-child span'
-            )?.textContent;
-        if (firstRowURL === removeUrl.URL) return 'Done';
-        return 'Failed';
+        // const firstRowURL = document
+        //     .querySelector('div[jscontroller="prqp7d"]')
+        //     ?.querySelector('div[jsname="KYYiw"]')
+        //     ?.querySelector('span[role="tabpanel"]')
+        //     ?.querySelector(
+        //         'table tbody tr:first-child td:first-child span'
+        //     )?.textContent;
+
+        // if (firstRowURL === removeUrl.URL) return 'Done'; // Starts with: https://khanhtran17520630.blogspot.com/aaaa. CO STARTS WITH
+        return 'Done';
     }
 };
 

@@ -43,6 +43,7 @@ const Removal = () => {
     const fileInput = useRef<HTMLInputElement>(null);
     const triggerFileInput = () =>
         fileInput.current && fileInput.current.click();
+
     const onUploadFile = async (
         event: TargetedEvent<HTMLInputElement, Event>
     ) => {
