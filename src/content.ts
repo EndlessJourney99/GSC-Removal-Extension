@@ -30,9 +30,12 @@ function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function waitForElm<T>(selector: string, timeout: number = 2000): Promise<T> {
+function waitForElm<T>(selector: string, timeout: number = 3000): Promise<T> {
+    let observer: MutationObserver;
+    let rejectTimeout: number;
+
     return new Promise((resolve, reject) => {
-        let timerId = setTimeout(() => {
+        rejectTimeout = setTimeout(() => {
             observer.disconnect();
             reject(
                 new Error(
@@ -42,13 +45,13 @@ function waitForElm<T>(selector: string, timeout: number = 2000): Promise<T> {
         }, timeout);
 
         if (document.querySelector(selector)) {
-            clearTimeout(timerId);
+            clearTimeout(rejectTimeout);
             return resolve(document.querySelector(selector) as T);
         }
 
-        const observer = new MutationObserver((mutations) => {
+        observer = new MutationObserver((mutations) => {
             if (document.querySelector(selector)) {
-                clearTimeout(timerId);
+                clearTimeout(rejectTimeout);
                 resolve(document.querySelector(selector) as T);
                 observer.disconnect();
             }
@@ -176,18 +179,14 @@ async function startRemove(data: Array<RemovalUrlDb>, options: RemovalOptions) {
             ) as HTMLAnchorElement;
         if (anchorElem !== null && anchorElem !== undefined) anchorElem.click();
     }
-
-    const newRequestBtn = document.querySelector(
-        'div[role="button"][jscontroller="VXdfxd"][jsname="Hf7sUe"]'
-    ) as HTMLButtonElement;
-    newRequestBtn.click();
-
+    clickNewRequestBtn();
     for (let i = 0; i < data.length; i++) {
         const Url = data[i];
         try {
             const result = await processRemoveUrl(Url, options);
             processResponse(Url, result);
             await sleep(options.Delays * 1000);
+            if (result === 'Done') clickNewRequestBtn();
         } catch (Err) {
             console.error(Err);
             processResponse(Url, 'Failed');
@@ -200,4 +199,12 @@ function processResponse(data: RemovalUrlDb, result: RemovalStatus) {
     chrome.runtime.sendMessage<UrlRemovalResponse>({
         updateData: data,
     });
+}
+
+function clickNewRequestBtn() {
+    (
+        document.querySelector(
+            'div[role="button"][jscontroller="VXdfxd"][jsname="Hf7sUe"]'
+        ) as HTMLButtonElement
+    ).click();
 }

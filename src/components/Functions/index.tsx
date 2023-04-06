@@ -6,10 +6,6 @@ import Removal from './Removal';
 import { useEffect, useState } from 'preact/hooks';
 
 const Functions = () => {
-    const [test, setTest] = useState(true);
-    useEffect(() => {
-        console.log(chrome.runtime.onMessage.hasListeners());
-    });
     return (
         <Tabs defaultKey="Removal" className="py-3">
             <TabHeader>
@@ -38,7 +34,6 @@ const Functions = () => {
                         consequatur iusto eveniet enim quos cumque repudiandae
                         impedit suscipit.
                     </p>
-                    <button onClick={() => setTest(!test)}>test</button>
                 </TabPanel>
             </TabContent>
         </Tabs>
