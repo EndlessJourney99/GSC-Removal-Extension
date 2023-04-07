@@ -4,6 +4,7 @@ import Link from '@mui/icons-material/Link';
 import TabPanel from '../Tabs/TabPanel';
 import Removal from './Removal';
 import { useEffect, useState } from 'preact/hooks';
+import ImportedLinks from './ImportedLinks';
 
 const Functions = () => {
     return (
@@ -27,13 +28,7 @@ const Functions = () => {
                     tabKey="Settings"
                     className="p-4 rounded-lg bg-gray-50"
                 >
-                    <p className="text-sm text-black-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Voluptatibus hic mollitia expedita amet a dolores
-                        doloribus temporibus totam nostrum perferendis. At
-                        consequatur iusto eveniet enim quos cumque repudiandae
-                        impedit suscipit.
-                    </p>
+                    <ImportedLinks />
                 </TabPanel>
             </TabContent>
         </Tabs>
