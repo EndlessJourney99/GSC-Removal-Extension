@@ -1,30 +1,33 @@
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import Download from '@mui/icons-material/Download';
 import Delete from '@mui/icons-material/Delete';
+import Cancel from '@mui/icons-material/CancelOutlined';
+import Play from '@mui/icons-material/PlayArrow';
 import BlockIcon from '@mui/icons-material/Block';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
-import { useEffect, useRef } from 'preact/hooks';
+import { useRef } from 'preact/hooks';
 import { TargetedEvent } from 'preact/compat';
-import { dbName, readCsvFile } from '../../utils/GlobalUtils';
+import { readCsvFile } from '../../utils/GlobalUtils';
 import { RemovalUrlCsv, RemovalUrlDb } from '../../types/RemovalUrl';
-import { useIndexedDB } from '../../hooks/IndexedDB';
-import { batch, useSignal } from '@preact/signals';
-import Notify, { NotifyType } from '../Notify';
+import { batch } from '@preact/signals';
+import Notify from '../Notify';
 import { computed } from '@preact/signals';
 import { RemoveMethod, RemoveType, useRemoval } from '../../hooks/useRemoval';
-import { UrlRemovalResponse } from '../../types/Execution';
 
 const Removal = () => {
-    const { add, getAll, clear, update } = useIndexedDB(dbName);
-    const isNotify = useSignal<boolean>(false);
-    const notifyMsg = useSignal<string>('');
-    const notifyType = useSignal<NotifyType>('Success');
-    const urlData = useSignal<Array<RemovalUrlDb>>([]);
-    const refUrlData = useRef(urlData);
-
-    const { removeType, delays, methods, StartFunc } = useRemoval({
-        data: urlData.value,
-    });
+    const {
+        isStart,
+        removeType,
+        delays,
+        methods,
+        HandleActionButton,
+        urlData,
+        isNotify,
+        notifyMsg,
+        notifyType,
+        clearDb,
+        addDB,
+    } = useRemoval();
     const countQueue = computed(
         () => urlData.value.filter((d) => d.Status === 'Queue').length
     );
@@ -49,7 +52,7 @@ const Removal = () => {
     ) => {
         if (event.currentTarget.files && event.currentTarget.files.length > 0) {
             try {
-                clear();
+                clearDb();
                 const csvFile = event.currentTarget.files[0];
                 const result = await readCsvFile<RemovalUrlCsv>(csvFile);
                 const dbSchema: Array<RemovalUrlDb> = result
@@ -63,7 +66,7 @@ const Removal = () => {
                     });
                 dbSchema.forEach((item) => {
                     if (item.URL.length)
-                        add<RemovalUrlDb>(item).then(
+                        addDB<RemovalUrlDb>(item).then(
                             (id) => {
                                 console.log(`${item.URL} inserted : ID ${id}`);
                                 item.id = id;
@@ -93,7 +96,7 @@ const Removal = () => {
     };
 
     const clearDB = () => {
-        clear();
+        clearDb();
         batch(() => {
             notifyMsg.value = 'Database clear!';
             notifyType.value = 'Success';
@@ -101,46 +104,6 @@ const Removal = () => {
             urlData.value = [];
         });
     };
-
-    const Start = () => {
-        try {
-            StartFunc();
-        } catch (e) {
-            batch(() => {
-                notifyMsg.value = (e as Error).message;
-                isNotify.value = true;
-                notifyType.value = 'Error';
-            });
-        }
-    };
-
-    useEffect(() => {
-        getAll<RemovalUrlDb>().then((data) => {
-            urlData.value = data;
-        });
-        const messageListener = (
-            message: UrlRemovalResponse,
-            sender: any,
-            response: any
-        ) => {
-            update({ ...message.updateData });
-            const row = refUrlData.current.value.find(
-                (v) => v.id === message.updateData.id
-            );
-            if (row) {
-                row.Status = message.updateData.Status;
-                urlData.value = [
-                    ...refUrlData.current.value.filter((v) => v.id !== row.id),
-                    row,
-                ];
-            }
-        };
-        chrome.runtime.onMessage.addListener(messageListener);
-
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        };
-    }, [refUrlData]);
 
     return (
         <section key="Removal-Fnc">
@@ -161,7 +124,7 @@ const Removal = () => {
                         Import CSV
                     </button>
                     <a
-                        href="/public/Sample-Table.csv"
+                        href="/Sample-Table.csv"
                         target="_blank"
                         className="text-sm underline text-start text-cyan-500 hover:text-cyan-700"
                     >
@@ -335,10 +298,20 @@ const Removal = () => {
             <h5 className="font-bold">Start/Stop</h5>
             <div className="py-3">
                 <button
-                    className="w-full py-3 bg-slate-500 text-white font-bold rounded-md uppercase hover:bg-slate-600 active:bg-slate-800"
-                    onClick={Start}
+                    className={`w-full py-3 text-white bg-slate-600 font-bold rounded-md uppercase hover:bg-slate-600 active:bg-slate-800 ${
+                        isStart.value ? ' animate-pulse' : ''
+                    }`}
+                    onClick={HandleActionButton}
                 >
-                    Start
+                    {isStart.value ? (
+                        <span className="flex gap-1 justify-center">
+                            Stop <Cancel />
+                        </span>
+                    ) : (
+                        <span className="flex gap-1 justify-center">
+                            Start <Play />
+                        </span>
+                    )}
                 </button>
             </div>
         </section>

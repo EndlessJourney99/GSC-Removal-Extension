@@ -6,14 +6,18 @@ import { compareHost } from './utils/GlobalUtils';
 import Header from './components/Header';
 import Functions from './components/Functions';
 import Footer from './components/Footer';
+import { GlobalSignal } from './signals/globalSignal';
 
 export const App = () => {
-    const state: any = useContext(AppState);
+    const state: GlobalSignal = useContext(AppState);
     const tabInfo = useSignal<chrome.tabs.Tab>({} as chrome.tabs.Tab);
 
     useEffect(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs && tabs.length) tabInfo.value = tabs[0];
+            if (tabs && tabs.length) {
+                tabInfo.value = tabs[0];
+                state.tabInfo.value = tabs[0];
+            }
         });
     }, []);
 

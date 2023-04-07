@@ -1,15 +1,16 @@
 import { RemovalStatus, RemovalUrlDb } from './RemovalUrl';
 
+export type Commands = 'Start' | 'Stop' | 'CheckStatus';
+
 interface ServiceMessage {
-    Command: 'Request' | 'Response';
-    TabId: number;
+    Command: Commands;
     OptionParameters?: any;
     Data?: any;
-    FunctionName: string;
 }
 
-interface UrlRemovalResponse {
-    updateData: RemovalUrlDb;
+interface BackgroundMessage {
+    Command: 'HandShake' | 'UpdateData' | 'Completed';
+    UpdateData?: RemovalUrlDb;
 }
 
-export type { ServiceMessage, UrlRemovalResponse };
+export type { ServiceMessage, BackgroundMessage };

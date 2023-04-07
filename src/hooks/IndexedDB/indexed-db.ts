@@ -15,7 +15,7 @@ export interface IndexDetails {
     indexName: string;
     order: string;
 }
-const indexedDB: IDBFactory =
+const indexedDBFactory: IDBFactory =
     window.indexedDB ||
     (<any>window).mozIndexedDB ||
     (<any>window).webkitIndexedDB ||
@@ -27,7 +27,7 @@ export function openDatabase(
     upgradeCallback?: Function
 ) {
     return new Promise<IDBDatabase>((resolve, reject) => {
-        const request = indexedDB.open(dbName, version);
+        const request = indexedDBFactory.open(dbName, version);
         let db: IDBDatabase;
         request.onsuccess = (event: Event) => {
             db = request.result;
@@ -49,7 +49,7 @@ export function CreateObjectStore(
     version: number,
     storeSchemas: ObjectStoreMeta[]
 ) {
-    const request: IDBOpenDBRequest = indexedDB.open(dbName, version);
+    const request: IDBOpenDBRequest = indexedDBFactory.open(dbName, version);
 
     request.onupgradeneeded = function (event: IDBVersionChangeEvent) {
         const database: IDBDatabase = (event.target as any).result;
