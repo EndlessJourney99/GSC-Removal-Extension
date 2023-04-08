@@ -28,6 +28,7 @@ const checkCurrentUrl = (): boolean => {
 const BackdropShield = (isAppend: boolean) => {
     if (isAppend) {
         const overlay = document.createElement('div');
+        // const popup = document.createElement();
         overlay.setAttribute(
             'style',
             'position: absolute; left:0; top:0; width: 100%; height:100%; background-color: #00000040; z-index: 999999'

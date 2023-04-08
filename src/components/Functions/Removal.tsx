@@ -9,7 +9,7 @@ import { useRef } from 'preact/hooks';
 import { TargetedEvent } from 'preact/compat';
 import { readCsvFile } from '../../utils/GlobalUtils';
 import { RemovalUrlCsv, RemovalUrlDb } from '../../types/RemovalUrl';
-import { batch } from '@preact/signals';
+import { batch, useSignal } from '@preact/signals';
 import Notify from '../Notify';
 import { computed } from '@preact/signals';
 import { RemoveMethod, RemoveType, useRemoval } from '../../hooks/useRemoval';
@@ -313,6 +313,13 @@ const Removal = () => {
                         </span>
                     )}
                 </button>
+                {isStart.value && (
+                    <div className="w-full text-center pt-2">
+                        <span className="font-bold text-red-500">
+                            Không được đóng tab Google Search Console
+                        </span>
+                    </div>
+                )}
             </div>
         </section>
     );
