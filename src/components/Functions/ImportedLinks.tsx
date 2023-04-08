@@ -76,10 +76,10 @@ const ImportedLinks = () => {
 
     return (
         <section key="List-Imported-Urls">
-            <table class="table-auto w-full text-left">
+            <table class="table-fixed w-full text-left [&>tbody>tr>td]:pr-2">
                 <thead>
                     <tr>
-                        <th>Url</th>
+                        <th className="w-64">Url</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -87,7 +87,9 @@ const ImportedLinks = () => {
                 <tbody>
                     {tableRow.value.map((item: RemovalUrlDb) => (
                         <tr key={item.id}>
-                            <td className="whitespace-nowrap">{item.URL}</td>
+                            <td className="whitespace-break-spaces break-words">
+                                {item.URL}
+                            </td>
                             <td>{statusBadge(item.Status)}</td>
                             <td>
                                 <button

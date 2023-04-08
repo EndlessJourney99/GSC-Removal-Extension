@@ -51,12 +51,14 @@ const StartRemoval = (
     });
 };
 
-const StopAction = (tabId: number) => {
+const StopAction = async (tabId: number) => {
     if (tabId < 0) throw new Error('Failed to get current open tabId');
 
-    chrome.tabs.sendMessage<ServiceMessage>(tabId, {
+    await chrome.tabs.sendMessage<ServiceMessage>(tabId, {
         Command: 'Stop',
     });
+
+    return;
 };
 
 const useRemoval = () => {
@@ -86,14 +88,14 @@ const useRemoval = () => {
             }
         );
 
-    const StopFunc = () => StopAction(state.tabInfo.value.id ?? -1);
     const CheckClientStatusFunc = () =>
         CheckClientStatus(state.tabInfo.value.id ?? -1);
-    const HandleActionButton = () => {
+    const HandleActionButton = async () => {
         try {
+            if (!isStart.value) StartFunc();
+            else await StopAction(state.tabInfo.value.id ?? -1);
+
             isStart.value = !isStart.value;
-            if (isStart.value) StartFunc();
-            else StopFunc();
         } catch (e) {
             batch(() => {
                 notifyMsg.value = (e as Error).message;

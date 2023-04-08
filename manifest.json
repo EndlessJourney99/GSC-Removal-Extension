@@ -1,7 +1,7 @@
 {
     "name": "Google Search Console AUTO Remove URLS",
     "description": "Auto remove url from GSC without copy and paste it manualy",
-    "version": "0.9",
+    "version": "1.0",
     "manifest_version": 3,
     "permissions": [
         "tabs",
