@@ -79,7 +79,10 @@ const useRemoval = () => {
         StartRemoval(
             state.tabInfo.value.id ?? -1,
             urlData.value.filter(
-                (d) => d.Status === 'Queue' || d.Status === 'Failed'
+                (d) =>
+                    d.Status === 'Queue' ||
+                    d.Status === 'Failed' ||
+                    d.Status === 'Exceed_Quota'
             ),
             {
                 RemoveType: removeType.value,
@@ -142,6 +145,19 @@ const useRemoval = () => {
                         row,
                     ];
                 }
+            } else if (
+                message.Command === 'Display_Error' &&
+                message.UpdateData !== undefined
+            ) {
+                isStart.value = false;
+                batch(() => {
+                    notifyMsg.value =
+                        message.UpdateData?.Status === 'Exceed_Quota'
+                            ? 'Đã vượt quá hạn mức 1000 URL / ngày !'
+                            : 'Đã có lỗi xảy ra!';
+                    isNotify.value = true;
+                    notifyType.value = 'Error';
+                });
             }
         };
         chrome.runtime.onMessage.addListener(messageListener);

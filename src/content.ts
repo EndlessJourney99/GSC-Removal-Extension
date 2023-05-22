@@ -159,16 +159,26 @@ const processRemoveUrl = async (
         if (submitBtn === null) return 'Failed';
         submitBtn.click();
         const progressElem = await waitForElm<HTMLDivElement>(
-            'div[jscontroller="ltDFwf"][role="progressbar"]',
-            3000
+            'div[role="dialog"][jscontroller="N5Lqpc"][aria-labelledby*="dwrFZd"] div[jscontroller="ltDFwf"][role="progressbar"]',
+            2000
         );
 
         let count = 0;
         while (document.body.contains(progressElem)) {
             count++;
             await sleep(100);
-            if (count === 50) break;
+            if (
+                (count > 10 && progressElem.offsetParent === null) ||
+                count > 50
+            ) {
+                break;
+            }
         }
+
+        await sleep(500);
+        const afterSubmitResultPanel = document.querySelector(
+            'div[role="dialog"][jscontroller="N5Lqpc"][aria-labelledby*="dwrFZd"]'
+        );
 
         // const firstRowURL = document
         //     .querySelector('div[jscontroller="prqp7d"]')
@@ -179,7 +189,8 @@ const processRemoveUrl = async (
         //     )?.textContent;
 
         // if (firstRowURL === removeUrl.URL) return 'Done'; // Starts with: https://khanhtran17520630.blogspot.com/aaaa. CO STARTS WITH
-        return 'Done';
+        if (afterSubmitResultPanel === null) return 'Done';
+        return 'Exceed_Quota';
     }
 };
 
@@ -201,6 +212,11 @@ async function startRemove(data: Array<RemovalUrlDb>, options: RemovalOptions) {
             await clickNewRequestBtn();
             const result = await processRemoveUrl(Url, options);
             processResponse(Url, result);
+            if (result === 'Exceed_Quota') {
+                _GLOBAL_STATUS_FLAG_ = false;
+                BackdropShield(false);
+                return;
+            }
             await sleep(options.Delays * 1000);
         } catch (Err) {
             console.error(Err);

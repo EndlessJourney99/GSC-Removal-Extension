@@ -63,10 +63,15 @@ chrome.runtime.onMessage.addListener(async function (
     sendResponse
 ) {
     const isExtensionAlive = await handShakeWithExtension();
-    if (isExtensionAlive) {
-        message.Command = 'UpdateData';
+    if (message.UpdateData?.Status === 'Exceed_Quota' && isExtensionAlive) {
+        message.Command = 'Display_Error';
         forwardMessageToExtension(message);
-    } else if (message.UpdateData !== undefined) {
-        updateDataBase({ ...message.UpdateData });
+    } else {
+        if (isExtensionAlive) {
+            message.Command = 'UpdateData';
+            forwardMessageToExtension(message);
+        } else if (message.UpdateData !== undefined) {
+            updateDataBase({ ...message.UpdateData });
+        }
     }
 });

@@ -9,7 +9,7 @@ interface ServiceMessage {
 }
 
 interface BackgroundMessage {
-    Command: 'HandShake' | 'UpdateData' | 'Completed';
+    Command: 'HandShake' | 'UpdateData' | 'Completed' | 'Display_Error';
     UpdateData?: RemovalUrlDb;
 }
 

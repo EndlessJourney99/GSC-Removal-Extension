@@ -3,7 +3,12 @@ interface RemovalUrlCsv {
     LastCrawled: string;
 }
 
-type RemovalStatus = 'Done' | 'Failed' | 'Url_Not_In_Property' | 'Queue';
+type RemovalStatus =
+    | 'Done'
+    | 'Failed'
+    | 'Url_Not_In_Property'
+    | 'Queue'
+    | 'Exceed_Quota';
 
 interface RemovalUrlDb extends RemovalUrlCsv {
     id?: any;
